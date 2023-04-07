@@ -1,0 +1,41 @@
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+
+import telegram
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
+
+# Set up the bot
+bot_token = '6198943687:AAGoqcaMoCrkygpI2lsoRmY4z6fsosTkvEs'
+updater = Updater(token=bot_token, use_context=True)
+dispatcher = updater.dispatcher
+
+# Define the function to send emails
+def send_email(update, context):
+    # Ask the user for the recipient and message
+    recipient = context.args[0]
+    message = context.args[1]
+    
+    # Set up the email
+    email = MIMEMultipart()
+    email['From'] = 'purqqqy@gmail.com'
+    email['To'] = recipient
+    email['Subject'] = 'Your subject here'
+    email.attach(MIMEText(message, 'plain'))
+
+    # Connect to the SMTP server and send the email
+    with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
+        smtp.ehlo()
+        smtp.starttls()
+        smtp.ehlo()
+        smtp.login('purqqqy@gmail.com', 'Poland098!')
+        for i in range(1000):
+            smtp.send_message(email)
+    context.bot.send_message(chat_id=update.effective_chat.id, text='Email sent successfully')
+
+# Define the command handler
+send_email_handler = CommandHandler('send_email', send_email)
+dispatcher.add_handler(send_email_handler)
+
+# Start the bot
+updater.start_polling()
